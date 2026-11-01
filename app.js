@@ -594,13 +594,19 @@
     let html = '<h2>⚙️ 設定</h2>';
     if (Y()) html += rulesHtml(C.settingsOf(Y()));
     if (isAdmin && Y()) html += membersHtml() + ruleEditHtml(C.settingsOf(Y()));
+    // URLを人に見られないよう、データの共有欄はチェックを入れたときだけ開く（開いた状態は覚えない）
     html += `<h3>☁️ データの共有</h3><div class="card">
-      <div class="row" style="margin-top:0"><input type="url" id="fbUrl" value="${esc(fbUrl)}" placeholder="https://xxxx-default-rtdb.firebaseio.com" style="flex:1;min-width:12em">
+      <div class="row" style="margin:0;justify-content:space-between">
+        <span class="muted">${fbUrl ? '☁️ 共有中（全員で同じデータ）' : '📱 この端末のみ'}</span>
+        <label class="toggle"><input type="checkbox" id="shareOpen"><span>設定を表示</span></label>
+      </div>
+      <div id="shareBody" class="hidden">
+      <div class="row"><input type="url" id="fbUrl" value="${esc(fbUrl)}" placeholder="https://xxxx-default-rtdb.firebaseio.com" style="flex:1;min-width:12em">
         <button class="btn primary small" id="fbSave">接続</button></div>
       <p class="muted" style="margin-bottom:0">${fbUrl ? 'Firebaseに保存しています（全員で同じデータを見られます）。' : '未接続のため、この端末のブラウザ内だけに保存しています。'}</p>
       ${fbUrl && isAdmin ? '<div class="row" style="margin-bottom:0"><button class="btn small" id="shareLink">🔗 メンバー用リンクをコピー</button></div>' : ''}
       <div class="warn">⚠️ データ共有のURLは他人に渡さないでください。このURLを知っている人は、成績データを見たり書き換えたりできます。
-        メンバー用リンクにも同じURLが入っているので、送るのはメンバーだけにして、SNSや掲示板などには載せないでください。</div></div>`;
+        メンバー用リンクにも同じURLが入っているので、送るのはメンバーだけにして、SNSや掲示板などには載せないでください。</div></div></div>`;
     if (isAdmin) {
       html += `<h3>💾 バックアップ・年度</h3><div class="card">
         <div class="row" style="margin-top:0"><button class="btn small" id="backup">バックアップを保存</button><button class="btn small" id="restoreBtn">バックアップから復元</button>
@@ -644,6 +650,7 @@
   }
 
   function bindSettings() {
+    $('shareOpen').onchange = (ev) => { $('shareBody').classList.toggle('hidden', !ev.target.checked); };
     $('fbSave').onclick = () => {
       const v = $('fbUrl').value.trim();
       if (v && !/^https:\/\/.+/.test(v)) { toast('https:// で始まるURLを入れてください'); return; }
