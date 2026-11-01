@@ -1,0 +1,4 @@
+# 実名入りのデータは公開リポジトリに入れない
+*.json
+!package.json
+node_modules/

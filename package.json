@@ -1,0 +1,8 @@
+{
+  "name": "urayu-jkai",
+  "private": true,
+  "description": "裏雄J会 成績表",
+  "scripts": {
+    "test": "node --test tests/core.test.js"
+  }
+}
